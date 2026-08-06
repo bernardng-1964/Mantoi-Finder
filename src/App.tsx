@@ -9,6 +9,7 @@ import { GridVisualizer } from './components/GridVisualizer';
 import { QuizCard } from './components/QuizCard';
 import { ResultCard } from './components/ResultCard';
 import { CharacterExplorer } from './components/CharacterExplorer';
+import { DisqusComments } from './components/DisqusComments';
 import { MantoiAvatar } from './components/MantoiAvatar';
 import { Sparkles, Compass, Play, RotateCcw, Info } from 'lucide-react';
 
@@ -224,6 +225,9 @@ export default function App() {
             </div>
           </div>
         )}
+
+        {/* Disqus Community Comments Section */}
+        <DisqusComments />
       </main>
 
       <Footer />
