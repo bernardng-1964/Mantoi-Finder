@@ -6,40 +6,37 @@
     <title>MANTOI Character Finder</title>
     <script>
       (function() {
-        // Suppress third-party cross-origin script errors (e.g., Disqus embed/count scripts in sandboxed preview)
-        var isDisqusOrScriptError = function(msg, url, target) {
+        // Suppress third-party cross-origin script errors (e.g. Disqus in sandboxed preview iframe)
+        function shouldSuppress(msg, url, target) {
           if (!msg || msg === 'Script error.') return true;
           if (typeof msg === 'string' && (msg.indexOf('Script error') !== -1 || msg.indexOf('disqus') !== -1)) return true;
           if (url && typeof url === 'string' && url.indexOf('disqus') !== -1) return true;
-          if (target && target.src && typeof target.src === 'string' && target.src.indexOf('disqus') !== -1) return true;
+          if (target && (target.tagName === 'SCRIPT' || (target.src && typeof target.src === 'string' && target.src.indexOf('disqus') !== -1))) return true;
           return false;
-        };
-
-        window.onerror = function(message, source, lineno, colno, error) {
-          if (isDisqusOrScriptError(message, source)) {
-            return true; // Suppress reporting to console/overlay
-          }
-          return false;
-        };
+        }
 
         window.addEventListener('error', function(event) {
-          if (isDisqusOrScriptError(event.message, event.filename, event.target)) {
-            event.stopImmediatePropagation();
-            event.preventDefault();
+          if (shouldSuppress(event.message, event.filename, event.target)) {
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+            if (event.preventDefault) event.preventDefault();
             return true;
           }
         }, true);
 
+        window.onerror = function(message, source, lineno, colno, error) {
+          if (shouldSuppress(message, source, null)) {
+            return true;
+          }
+          return false;
+        };
+
         window.addEventListener('unhandledrejection', function(event) {
           var reason = event.reason;
-          if (
-            !reason ||
-            reason === 'Script error.' ||
-            (typeof reason === 'string' && (reason.indexOf('Script error') !== -1 || reason.indexOf('disqus') !== -1)) ||
-            (reason && reason.message && typeof reason.message === 'string' && (reason.message.indexOf('Script error') !== -1 || reason.message.indexOf('disqus') !== -1))
-          ) {
-            event.stopImmediatePropagation();
-            event.preventDefault();
+          var msg = reason && (reason.message || reason);
+          if (shouldSuppress(msg, null, null)) {
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+            if (event.preventDefault) event.preventDefault();
+            return true;
           }
         }, true);
       })();
