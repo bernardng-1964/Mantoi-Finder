@@ -1,40 +1,68 @@
-import React, { useEffect, useState } from 'react';
+import React, { Component, ReactNode } from 'react';
 import { DiscussionEmbed } from 'disqus-react';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, ExternalLink } from 'lucide-react';
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+  fallback: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+class DisqusErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  declare props: ErrorBoundaryProps;
+  declare state: ErrorBoundaryState;
+
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    console.warn('Disqus embed could not be rendered:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 
 export const DisqusComments: React.FC = () => {
-  const [loadError, setLoadError] = useState(false);
-
-  useEffect(() => {
-    // Configure global disqus_config window object if needed by disqus embed
-    (window as unknown as { disqus_config?: () => void }).disqus_config = function () {
-      const pageConfig = this as unknown as { page: { url: string; identifier: string } };
-      pageConfig.page.url = window.location.href.split('#')[0];
-      pageConfig.page.identifier = 'mantoi-character-finder-main';
-    };
-
-    // Inject embed.js directly if not already present
-    const existingScript = document.getElementById('disqus-embed-script');
-    if (!existingScript) {
-      const d = document;
-      const s = d.createElement('script');
-      s.id = 'disqus-embed-script';
-      s.src = 'https://mantoi-finder.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', (+new Date()).toString());
-      s.async = true;
-      s.onerror = () => {
-        setLoadError(true);
-      };
-      (d.head || d.body).appendChild(s);
-    }
-  }, []);
-
   const disqusShortname = 'mantoi-finder';
   const disqusConfig = {
     url: typeof window !== 'undefined' ? window.location.href.split('#')[0] : 'https://mantoi-finder.disqus.com',
     identifier: 'mantoi-character-finder-main',
     title: 'MANTOI Character Finder',
   };
+
+  const FallbackUI = (
+    <div className="p-4 bg-amber-50 border border-amber-200/60 text-stone-700 rounded-2xl text-sm flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <p className="font-medium text-stone-800">Community Discussion Board</p>
+        <p className="text-stone-600 text-xs mt-0.5">
+          Disqus comments are hosted on our dedicated community page.
+        </p>
+      </div>
+      <a
+        href="https://mantoi-finder.disqus.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-semibold transition-colors"
+      >
+        <span>Join Discussion</span>
+        <ExternalLink className="w-3.5 h-3.5" />
+      </a>
+    </div>
+  );
 
   return (
     <section className="bg-white border border-amber-200/90 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4 my-8">
@@ -45,25 +73,11 @@ export const DisqusComments: React.FC = () => {
         </h3>
       </div>
 
-      {loadError ? (
-        <div className="p-4 bg-amber-50 text-stone-700 rounded-xl text-sm space-y-2">
-          <p>
-            Disqus comments thread is hosted at{' '}
-            <a
-              href="https://mantoi-finder.disqus.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-amber-800 underline font-semibold"
-            >
-              mantoi-finder.disqus.com
-            </a>.
-          </p>
-        </div>
-      ) : (
+      <DisqusErrorBoundary fallback={FallbackUI}>
         <div id="disqus_thread">
           <DiscussionEmbed shortname={disqusShortname} config={disqusConfig} />
         </div>
-      )}
+      </DisqusErrorBoundary>
 
       <noscript>
         Please enable JavaScript to view the{' '}
@@ -72,6 +86,7 @@ export const DisqusComments: React.FC = () => {
     </section>
   );
 };
+
 
 
 

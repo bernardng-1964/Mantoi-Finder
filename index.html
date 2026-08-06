@@ -4,20 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MANTOI Character Finder</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Filter third-party cross-origin script errors (e.g., Disqus embed in iframe)
+      // Suppress opaque third-party cross-origin script errors (e.g. Disqus in sandboxed preview)
+      window.onerror = function(message, source, lineno, colno, error) {
+        if (message === 'Script error.' || (source && source.indexOf('disqus') !== -1)) {
+          return true; // Suppress reporting
+        }
+        return false;
+      };
+
       window.addEventListener('error', function(event) {
         if (
           event.message === 'Script error.' ||
-          (event.filename && event.filename.includes('disqus')) ||
-          (event.message && event.message.includes('disqus'))
+          (event.filename && event.filename.indexOf('disqus') !== -1) ||
+          (event.message && event.message.indexOf('disqus') !== -1)
         ) {
           event.stopImmediatePropagation();
-          return true;
+          event.preventDefault();
         }
       }, true);
 
@@ -25,22 +28,31 @@
         if (
           event.reason &&
           typeof event.reason.message === 'string' &&
-          (event.reason.message.includes('Script error') || event.reason.message.includes('disqus'))
+          (event.reason.message.indexOf('Script error') !== -1 || event.reason.message.indexOf('disqus') !== -1)
         ) {
           event.preventDefault();
         }
       });
-
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
       // Load Disqus count script safely
       (function() {
-        var s = document.createElement('script');
-        s.id = 'dsq-count-scr';
-        s.src = 'https://mantoi-finder.disqus.com/count.js';
-        s.async = true;
-        s.onerror = function() {
-          console.warn('Disqus count script could not be loaded in this context.');
-        };
-        (document.head || document.body).appendChild(s);
+        try {
+          var s = document.createElement('script');
+          s.id = 'dsq-count-scr';
+          s.src = 'https://mantoi-finder.disqus.com/count.js';
+          s.async = true;
+          s.onerror = function() {
+            // Silently handle load failure in restricted iframe/browser environments
+          };
+          (document.head || document.body).appendChild(s);
+        } catch (e) {
+          // Ignore
+        }
       })();
     </script>
   </body>
