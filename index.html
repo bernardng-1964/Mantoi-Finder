@@ -38,23 +38,7 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script>
-      // Load Disqus count script safely
-      (function() {
-        try {
-          var s = document.createElement('script');
-          s.id = 'dsq-count-scr';
-          s.src = 'https://mantoi-finder.disqus.com/count.js';
-          s.async = true;
-          s.onerror = function() {
-            // Silently handle load failure in restricted iframe/browser environments
-          };
-          (document.head || document.body).appendChild(s);
-        } catch (e) {
-          // Ignore
-        }
-      })();
-    </script>
+    <script id="dsq-count-scr" src="//mantoi-finder.disqus.com/count.js" async></script>
   </body>
 </html>
 
