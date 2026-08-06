@@ -67,11 +67,11 @@ export const MANTOI_CHARACTERS: MantoiCharacter[] = [
   {
     id: 'coco-mantoi',
     name: 'Coco Mantoi',
-    alias: 'Mantcoco',
+    alias: 'Coco Mantoi',
     coordinate: { x: -4, y: 2 },
     construct: 'Quiet, calm, passive reflector soaking in experiences internally.',
     description:
-      'Coco Mantoi (Mantcoco) is a peaceful, introspective soul. They digest the world quietly from within, enjoying calm daydreaming and peaceful background reflection without needing to sort or organize.',
+      'Coco Mantoi is a peaceful, introspective soul. They digest the world quietly from within, enjoying calm daydreaming and peaceful background reflection without needing to sort or organize.',
     parentInsight:
       'Respect their quiet sanctuary. You do not always need to ask what they are thinking — simply enjoy parallel peaceful activities alongside them.',
     badgeColor: '#7B341E',
@@ -81,11 +81,11 @@ export const MANTOI_CHARACTERS: MantoiCharacter[] = [
   {
     id: 'kopi-mantoi',
     name: 'Kopi Mantoi',
-    alias: 'Kopitau',
+    alias: 'Kopi Mantoi',
     coordinate: { x: 2, y: 4 },
     construct: 'Energized, focused, and dedicated to putting in effort to complete tasks with others.',
     description:
-      'Kopi Mantoi (Kopitau) brings bright focus and spirited effort! They love taking on challenges, seeing projects through to the finish line, and sharing enthusiasm with team players.',
+      'Kopi Mantoi brings bright focus and spirited effort! They love taking on challenges, seeing projects through to the finish line, and sharing enthusiasm with team players.',
     parentInsight:
       'Celebrate their dedication and determination! Help them pace their energy so they do not burn out before reaching their goals.',
     badgeColor: '#8C4A27',
@@ -177,18 +177,18 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 1,
     category: 'Processing Mode',
-    title: 'Processing New Experiences',
-    scenario: 'When your child encounters a completely new or exciting idea...',
+    title: 'Having a Cool New Idea!',
+    scenario: 'When you get a super fun new idea or discover something exciting...',
     options: [
       {
         id: 'A',
-        text: 'Quietly mulls it over alone first, soaking it in internally before speaking.',
+        text: 'You quietly think about it in your head first before telling anyone.',
         impact: { x: -1.2 },
         traitTag: 'Internal Reflection',
       },
       {
         id: 'B',
-        text: 'Immediately shares it out loud, talking or showing others right away.',
+        text: 'You shout it out right away and run to show or tell someone!',
         impact: { x: 1.2 },
         traitTag: 'Outward Sharing',
       },
@@ -197,18 +197,18 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 2,
     category: 'Regulation State',
-    title: 'Sudden Plan Shifts',
-    scenario: 'When a favored plan suddenly changes at the last minute...',
+    title: 'When Plans Change Suddenly',
+    scenario: 'You were ready to play outside, but it suddenly starts raining heavy...',
     options: [
       {
         id: 'A',
-        text: 'Shows a big, immediate reaction — energy spikes or frustration bursts out.',
+        text: 'You feel a big burst of anger or frustration right away.',
         impact: { y: -1.3 },
         traitTag: 'Immediate Reaction',
       },
       {
         id: 'B',
-        text: 'Pauses, takes a breath, and smoothly adapts without major turbulence.',
+        text: 'You pause, take a deep breath, and easily find something fun to do inside.',
         impact: { y: 1.3 },
         traitTag: 'Steady Adaptation',
       },
@@ -217,18 +217,18 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 3,
     category: 'Processing Mode',
-    title: 'Solving a Tricky Problem',
-    scenario: 'When stuck on a challenging puzzle or toy construction...',
+    title: 'Tricky Lego or Puzzle',
+    scenario: 'When a Lego set or puzzle gets really hard to build...',
     options: [
       {
         id: 'A',
-        text: 'Retreats to a quiet spot to tinker solo until they figure it out.',
+        text: 'You take it to a quiet spot and keep trying all by yourself.',
         impact: { x: -1.2 },
         traitTag: 'Solo Problem Solving',
       },
       {
         id: 'B',
-        text: 'Calls someone over to talk through the problem or work together.',
+        text: 'You call a friend or parent over so you can solve it together.',
         impact: { x: 1.2 },
         traitTag: 'Collaborative Problem Solving',
       },
@@ -237,18 +237,18 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 4,
     category: 'Regulation State',
-    title: 'After a Long Outing',
-    scenario: 'At the end of a busy, sensory-filled day or park visit...',
+    title: 'After a Long Party or Park Day',
+    scenario: 'At the end of a super busy birthday party or full day at the park...',
     options: [
       {
         id: 'A',
-        text: 'Feels a bit raw or overtired, needing close co-regulation and comfort.',
+        text: 'You feel tired and cranky, needing extra hugs or snuggles to feel better.',
         impact: { y: -1.2 },
         traitTag: 'Needs Comfort & Rest',
       },
       {
         id: 'B',
-        text: 'Stays grounded and content, calmly winding down in a settled mood.',
+        text: 'You feel happy and relaxed, ready to chill out smoothly.',
         impact: { y: 1.2 },
         traitTag: 'Grounded Wind-down',
       },
@@ -257,18 +257,18 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 5,
     category: 'Processing Mode',
-    title: 'Social Misunderstandings',
-    scenario: 'After a small squabble or disagreement with a sibling or friend...',
+    title: 'Toy Disagreements',
+    scenario: 'If you and a friend both want the exact same favorite toy...',
     options: [
       {
         id: 'A',
-        text: 'Needs time alone in their room or cozy space to digest feelings first.',
+        text: 'You want a little quiet space by yourself first to calm down.',
         impact: { x: -1.1 },
         traitTag: 'Space to Digest',
       },
       {
         id: 'B',
-        text: 'Wants to talk it out, connect, or repair things right in the moment.',
+        text: 'You want to talk it out and fix the problem right away together.',
         impact: { x: 1.1 },
         traitTag: 'Direct Connection',
       },
@@ -277,18 +277,18 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 6,
     category: 'Regulation State',
-    title: 'Facing New Group Activities',
-    scenario: 'Stepping into a new classroom or party full of noise and people...',
+    title: 'Entering a Loud Party',
+    scenario: 'When you walk into a new room filled with music and lots of kids...',
     options: [
       {
         id: 'A',
-        text: 'Feels heightened energy or hesitation, holding tight to a trusted adult.',
+        text: 'You feel a bit shy or super jumpy, holding tight to your grown-up.',
         impact: { y: -1.1 },
         traitTag: 'Seeks Safety Anchor',
       },
       {
         id: 'B',
-        text: 'Walks in calmly, observing with ease and taking things in stride.',
+        text: 'You walk right in calmly, looking around and taking it all in easily.',
         impact: { y: 1.1 },
         traitTag: 'Easy Grounding',
       },
@@ -297,18 +297,18 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 7,
     category: 'Processing Mode',
-    title: 'Free Play Preference',
-    scenario: 'Given an open, unstructured afternoon at home...',
+    title: 'Free Time at Home',
+    scenario: 'You have a whole open afternoon with no school or chores...',
     options: [
       {
         id: 'A',
-        text: 'Builds elaborate imaginative worlds solo, lost in quiet internal play.',
+        text: 'You build secret pretend worlds, drawings, or stories by yourself.',
         impact: { x: -1.0, y: 0.3 },
         traitTag: 'Solo Imagination',
       },
       {
         id: 'B',
-        text: 'Rallies family or friends into group games, performance, or roleplay.',
+        text: 'You gather everyone to play a group game, put on a show, or play together.',
         impact: { x: 1.0, y: 0.3 },
         traitTag: 'Group Energy',
       },
@@ -317,18 +317,18 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 8,
     category: 'Regulation State',
-    title: 'Noise & Atmosphere',
-    scenario: 'When the room gets loud or chaotic around them...',
+    title: 'When the Room Gets Noisy',
+    scenario: 'When everyone around you starts shouting, laughing, and running around...',
     options: [
       {
         id: 'A',
-        text: 'Gets activated or hyper-reactive, mirroring the high noise level.',
+        text: 'Your energy jumps way up too, and you join in the wild noisy fun!',
         impact: { y: -1.1 },
         traitTag: 'Absorbs Surroundings',
       },
       {
         id: 'B',
-        text: 'Maintains an inner bubble of calm, remaining mostly unfazed.',
+        text: 'You stay in your own quiet bubble, completely unbothered by the noise.',
         impact: { y: 1.1 },
         traitTag: 'Inner Calm Bubble',
       },
@@ -337,20 +337,20 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 9,
     category: 'Special Focus',
-    title: 'Effort vs Letting Go (Gating Q1)',
-    scenario: 'When working on a creation that gets complicated or doesn\'t go as planned...',
+    title: 'When a Drawing Gets Messy',
+    scenario: 'When you are making a project and it doesn\'t turn out like you planned...',
     gatingFlag: 'kopi_vs_looking',
     options: [
       {
         id: 'A',
-        text: 'Pushes through with determination and active effort to finish it out! (Kopitau style)',
+        text: 'You try really hard and keep going until you finish it! (Kopi Mantoi style)',
         impact: { x: 0.5, y: 0.8 },
         gatingValue: 'kopi',
         traitTag: 'Focused Effort & Finishing',
       },
       {
         id: 'B',
-        text: 'Laughs it off, lets go of the outcome, and happily moves on! (Loo-King style)',
+        text: 'You laugh it off, let it go, and happily start something new! (Loo-King style)',
         impact: { x: 0.5, y: 0.8 },
         gatingValue: 'looking',
         traitTag: 'Releasing & Flowing',
@@ -360,20 +360,20 @@ export const QUIZ_QUESTIONS: Question[] = [
   {
     id: 10,
     category: 'Special Focus',
-    title: 'Internal Quiet Style (Gating Q2)',
-    scenario: 'During peaceful downtime after a long day...',
+    title: 'Cozy Wind-down Time',
+    scenario: 'When you are resting quietly in bed or on the couch before sleep...',
     gatingFlag: 'coco_vs_binking',
     options: [
       {
         id: 'A',
-        text: 'Gently relaxes, quietly daydreaming without needing to organize thoughts. (Mantcoco style)',
+        text: 'You gently relax and daydream happy thoughts. (Coco Mantoi style)',
         impact: { x: -0.8, y: 0.5 },
         gatingValue: 'coco',
         traitTag: 'Passive Peaceful Reflection',
       },
       {
         id: 'B',
-        text: 'Enjoys sorting items, categorizing thoughts, or organizing details in order. (Bin-King style)',
+        text: 'You like organizing your toys in neat lines or sorting your thoughts. (Bin-King style)',
         impact: { x: -0.8, y: 0.5 },
         gatingValue: 'binking',
         traitTag: 'Active Sorting & Deciding',
