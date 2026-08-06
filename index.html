@@ -8,7 +8,20 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script id="dsq-count-scr" src="https://mantoi-finder.disqus.com/count.js" async></script>
+    <script>
+      // Load Disqus count script safely
+      (function() {
+        var s = document.createElement('script');
+        s.id = 'dsq-count-scr';
+        s.src = 'https://mantoi-finder.disqus.com/count.js';
+        s.async = true;
+        s.onerror = function() {
+          console.warn('Disqus count script could not be loaded.');
+        };
+        (document.head || document.body).appendChild(s);
+      })();
+    </script>
   </body>
 </html>
+
 
