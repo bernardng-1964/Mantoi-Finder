@@ -9,6 +9,28 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
+      // Filter third-party cross-origin script errors (e.g., Disqus embed in iframe)
+      window.addEventListener('error', function(event) {
+        if (
+          event.message === 'Script error.' ||
+          (event.filename && event.filename.includes('disqus')) ||
+          (event.message && event.message.includes('disqus'))
+        ) {
+          event.stopImmediatePropagation();
+          return true;
+        }
+      }, true);
+
+      window.addEventListener('unhandledrejection', function(event) {
+        if (
+          event.reason &&
+          typeof event.reason.message === 'string' &&
+          (event.reason.message.includes('Script error') || event.reason.message.includes('disqus'))
+        ) {
+          event.preventDefault();
+        }
+      });
+
       // Load Disqus count script safely
       (function() {
         var s = document.createElement('script');
@@ -16,7 +38,7 @@
         s.src = 'https://mantoi-finder.disqus.com/count.js';
         s.async = true;
         s.onerror = function() {
-          console.warn('Disqus count script could not be loaded.');
+          console.warn('Disqus count script could not be loaded in this context.');
         };
         (document.head || document.body).appendChild(s);
       })();

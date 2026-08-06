@@ -1,26 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DiscussionEmbed } from 'disqus-react';
 import { MessageSquare } from 'lucide-react';
 
 export const DisqusComments: React.FC = () => {
-  const [hasError, setHasError] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    const handleScriptError = (event: ErrorEvent) => {
-      if (
-        event.message &&
-        (event.message.includes('Script error') ||
-          event.message.includes('disqus') ||
-          event.filename?.includes('disqus'))
-      ) {
-        setHasError(true);
-      }
+    // Configure global disqus_config window object if needed by disqus embed
+    (window as unknown as { disqus_config?: () => void }).disqus_config = function () {
+      const pageConfig = this as unknown as { page: { url: string; identifier: string } };
+      pageConfig.page.url = window.location.href.split('#')[0];
+      pageConfig.page.identifier = 'mantoi-character-finder-main';
     };
 
-    window.addEventListener('error', handleScriptError);
-    return () => {
-      window.removeEventListener('error', handleScriptError);
-    };
+    // Inject embed.js directly if not already present
+    const existingScript = document.getElementById('disqus-embed-script');
+    if (!existingScript) {
+      const d = document;
+      const s = d.createElement('script');
+      s.id = 'disqus-embed-script';
+      s.src = 'https://mantoi-finder.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', (+new Date()).toString());
+      s.async = true;
+      s.onerror = () => {
+        setLoadError(true);
+      };
+      (d.head || d.body).appendChild(s);
+    }
   }, []);
 
   const disqusShortname = 'mantoi-finder';
@@ -39,18 +45,19 @@ export const DisqusComments: React.FC = () => {
         </h3>
       </div>
 
-      {hasError ? (
-        <div className="p-4 bg-amber-50 text-stone-700 rounded-xl text-sm">
-          Disqus comments could not be loaded due to browser tracking protection or iframe cross-origin restrictions. You can visit{' '}
-          <a
-            href="https://mantoi-finder.disqus.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-amber-800 underline font-semibold"
-          >
-            mantoi-finder.disqus.com
-          </a>{' '}
-          directly.
+      {loadError ? (
+        <div className="p-4 bg-amber-50 text-stone-700 rounded-xl text-sm space-y-2">
+          <p>
+            Disqus comments thread is hosted at{' '}
+            <a
+              href="https://mantoi-finder.disqus.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-amber-800 underline font-semibold"
+            >
+              mantoi-finder.disqus.com
+            </a>.
+          </p>
         </div>
       ) : (
         <div id="disqus_thread">
