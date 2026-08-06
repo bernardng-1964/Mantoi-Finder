@@ -6,31 +6,38 @@
     <title>MANTOI Character Finder</title>
     <script>
       (function() {
-        // Suppress third-party cross-origin script errors (e.g., Disqus in sandboxed preview iframe)
-        var suppress = function(msg, url) {
-          if (!msg || msg === 'Script error.' || (typeof msg === 'string' && (msg.indexOf('Script error') !== -1 || msg.indexOf('disqus') !== -1)) || (url && url.indexOf('disqus') !== -1)) {
-            return true;
-          }
+        // Suppress third-party cross-origin script errors (e.g., Disqus embed/count scripts in sandboxed preview)
+        var isDisqusOrScriptError = function(msg, url, target) {
+          if (!msg || msg === 'Script error.') return true;
+          if (typeof msg === 'string' && (msg.indexOf('Script error') !== -1 || msg.indexOf('disqus') !== -1)) return true;
+          if (url && typeof url === 'string' && url.indexOf('disqus') !== -1) return true;
+          if (target && target.src && typeof target.src === 'string' && target.src.indexOf('disqus') !== -1) return true;
           return false;
         };
 
         window.onerror = function(message, source, lineno, colno, error) {
-          if (suppress(message, source)) {
-            return true;
+          if (isDisqusOrScriptError(message, source)) {
+            return true; // Suppress reporting to console/overlay
           }
           return false;
         };
 
         window.addEventListener('error', function(event) {
-          if (suppress(event.message, event.filename)) {
+          if (isDisqusOrScriptError(event.message, event.filename, event.target)) {
             event.stopImmediatePropagation();
             event.preventDefault();
+            return true;
           }
         }, true);
 
         window.addEventListener('unhandledrejection', function(event) {
           var reason = event.reason;
-          if (!reason || (typeof reason === 'string' && (reason.indexOf('Script error') !== -1 || reason.indexOf('disqus') !== -1)) || (reason && reason.message && typeof reason.message === 'string' && (reason.message.indexOf('Script error') !== -1 || reason.message.indexOf('disqus') !== -1))) {
+          if (
+            !reason ||
+            reason === 'Script error.' ||
+            (typeof reason === 'string' && (reason.indexOf('Script error') !== -1 || reason.indexOf('disqus') !== -1)) ||
+            (reason && reason.message && typeof reason.message === 'string' && (reason.message.indexOf('Script error') !== -1 || reason.message.indexOf('disqus') !== -1))
+          ) {
             event.stopImmediatePropagation();
             event.preventDefault();
           }
@@ -41,7 +48,7 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <script id="dsq-count-scr" src="//mantoi-finder.disqus.com/count.js" async onerror="this.onerror=null;"></script>
+    <script id="dsq-count-scr" src="https://mantoi-finder.disqus.com/count.js" async crossorigin="anonymous"></script>
   </body>
 </html>
 
