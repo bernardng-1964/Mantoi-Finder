@@ -1,0 +1,6 @@
+{
+  "name": "MANTOI Character Finder",
+  "description": "An interactive, parent-friendly 2-axis quiz tool to discover which MANTOI character best matches a child's current processing and regulation state.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
