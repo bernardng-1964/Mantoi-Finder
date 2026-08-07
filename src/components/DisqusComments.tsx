@@ -12,6 +12,34 @@ export const DisqusComments: React.FC = () => {
     } catch {
       setIsInIframe(true);
     }
+
+    // Set up disqus_config on window as requested
+    const canonicalUrl = typeof window !== 'undefined'
+      ? window.location.origin + window.location.pathname
+      : 'https://mantoi-finder.disqus.com';
+
+    (window as any).disqus_config = function (this: any) {
+      this.page.url = canonicalUrl;
+      this.page.identifier = 'mantoi-character-finder-main';
+    };
+
+    // Load embed script if not present, or trigger DISQUS.reset if already present
+    if ((window as any).DISQUS) {
+      (window as any).DISQUS.reset({
+        reload: true,
+        config: (window as any).disqus_config,
+      });
+    } else {
+      const d = document;
+      let s = document.getElementById('disqus-embed-script') as HTMLScriptElement | null;
+      if (!s) {
+        s = d.createElement('script');
+        s.id = 'disqus-embed-script';
+        s.src = 'https://mantoi-finder.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', (+new Date()).toString());
+        (d.head || d.body).appendChild(s);
+      }
+    }
   }, []);
 
   const canonicalUrl = typeof window !== 'undefined'
