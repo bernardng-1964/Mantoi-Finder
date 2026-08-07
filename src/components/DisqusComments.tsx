@@ -20,7 +20,7 @@ export const DisqusComments: React.FC = () => {
         <div className="flex items-center space-x-2.5">
           <MessageSquare className="w-6 h-6 text-[#535D3B]" />
           <h3 className="text-xl sm:text-2xl font-serif font-bold text-stone-800 tracking-tight">
-            Community & Reader Discussion
+            Mantoi Family Discussion
           </h3>
         </div>
         <div className="bg-[#EFEFE8] text-stone-700 text-xs font-semibold px-3.5 py-1.5 rounded-full border border-stone-300/50 shadow-2xs">
@@ -30,11 +30,7 @@ export const DisqusComments: React.FC = () => {
 
       {/* Sub-text line */}
       <p className="text-sm text-stone-600 font-normal leading-relaxed">
-        Leave feedback, ask questions, or discuss{' '}
-        <strong className="font-semibold text-stone-800">
-          EzRead Reader & Parent Community
-        </strong>{' '}
-        with fellow readers and parents!
+        Leave feedback, ask questions, or discuss parenting tips!
       </p>
 
       {/* Embedded Disqus Forum */}
