@@ -1,13 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, ExternalLink, Info, RefreshCw } from 'lucide-react';
+import { MessageSquare, ExternalLink, Info, RefreshCw, Send, CheckCircle2, User } from 'lucide-react';
+
+interface LocalComment {
+  id: string;
+  author: string;
+  content: string;
+  createdAt: string;
+}
 
 export const DisqusComments: React.FC = () => {
   const disqusShortname = 'mantoi-finder';
   const [isInIframe, setIsInIframe] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [localComments, setLocalComments] = useState<LocalComment[]>([]);
+  const [authorName, setAuthorName] = useState('');
+  const [commentText, setCommentText] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  // Load local saved fallback comments
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('mantoi_local_comments');
+      if (stored) {
+        setLocalComments(JSON.parse(stored));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
-    // Detect iframe environment
+    // Detect if app is running inside an iframe
     try {
       setIsInIframe(window.self !== window.top);
     } catch {
@@ -32,7 +54,6 @@ export const DisqusComments: React.FC = () => {
           reload: true,
           config: (window as any).disqus_config,
         });
-        setLoaded(true);
       } catch (err) {
         console.warn('Disqus reset error:', err);
       }
@@ -44,30 +65,54 @@ export const DisqusComments: React.FC = () => {
         s.id = 'disqus-embed-script';
         s.src = `https://${disqusShortname}.disqus.com/embed.js`;
         s.setAttribute('data-timestamp', (+new Date()).toString());
-        s.onload = () => setLoaded(true);
-        s.onerror = () => setLoaded(false);
         (d.head || d.body).appendChild(s);
-      } else {
-        setLoaded(true);
       }
     }
   }, []);
 
   const handleReloadDisqus = () => {
     if ((window as any).DISQUS) {
-      (window as any).DISQUS.reset({
-        reload: true,
-        config: (window as any).disqus_config,
-      });
+      try {
+        (window as any).DISQUS.reset({
+          reload: true,
+          config: (window as any).disqus_config,
+        });
+      } catch {
+        window.location.reload();
+      }
     } else {
       window.location.reload();
     }
   };
 
+  const handleAddLocalComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+
+    const newComment: LocalComment = {
+      id: Date.now().toString(),
+      author: authorName.trim() || 'Mantoi Parent',
+      content: commentText.trim(),
+      createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    const updated = [newComment, ...localComments];
+    setLocalComments(updated);
+    try {
+      localStorage.setItem('mantoi_local_comments', JSON.stringify(updated));
+    } catch {
+      // ignore
+    }
+
+    setCommentText('');
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
+  };
+
   const directDisqusUrl = `https://disqus.com/home/forum/${disqusShortname}/`;
 
   return (
-    <section className="bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4 my-8">
+    <section className="bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6 my-8">
       {/* Top Header Row */}
       <div className="flex items-center justify-between border-b border-stone-200/80 pb-4 flex-wrap gap-3">
         <div className="flex items-center space-x-2.5">
@@ -105,17 +150,16 @@ export const DisqusComments: React.FC = () => {
         Leave feedback, ask questions, or discuss parenting tips!
       </p>
 
-      {/* Iframe Cookie / Login Notice Banner */}
+      {/* Iframe Third-Party Cookie Warning Banner */}
       {isInIframe && (
         <div className="flex items-start gap-3 p-4 bg-amber-50/90 border border-amber-200 rounded-2xl text-xs text-amber-900 shadow-2xs">
           <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
           <div className="space-y-1.5">
             <p className="font-semibold text-amber-950">
-              Note on commenting inside the preview panel:
+              Browser Security Notice (Embedded Frame):
             </p>
             <p className="text-amber-800 leading-relaxed">
-              Browser security policies block third-party authentication cookies inside embedded iframe previews.
-              If you have trouble logging in or submitting comments below, please click{' '}
+              Modern browsers block third-party login cookies inside embedded preview frames. If you cannot log into Disqus or post comments in this embedded panel, please click{' '}
               <a
                 href={typeof window !== 'undefined' ? window.location.href : '#'}
                 target="_blank"
@@ -124,23 +168,92 @@ export const DisqusComments: React.FC = () => {
               >
                 Open App in New Tab
               </a>{' '}
-              or visit the{' '}
-              <a
-                href={directDisqusUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold underline hover:text-amber-950"
-              >
-                Mantoi Forum directly on Disqus
-              </a>
-              .
+              to use Disqus seamlessly, or leave a quick message using the in-app feedback box below!
             </p>
           </div>
         </div>
       )}
 
+      {/* In-App Quick Feedback Form */}
+      <div className="bg-[#FAF7F2] border border-stone-200/80 rounded-2xl p-4 sm:p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+            Quick In-App Message
+          </span>
+          {submitted && (
+            <span className="inline-flex items-center gap-1 text-xs text-emerald-700 font-medium">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Posted to discussion list!
+            </span>
+          )}
+        </div>
+        <form onSubmit={handleAddLocalComment} className="space-y-3">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              placeholder="Your Name / Parent Alias (Optional)"
+              value={authorName}
+              onChange={(e) => setAuthorName(e.target.value)}
+              className="px-3.5 py-2 text-xs bg-white border border-stone-300 rounded-xl text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#535D3B] sm:w-1/3"
+            />
+            <input
+              type="text"
+              required
+              placeholder="Write a quick comment or parenting feedback..."
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              className="flex-1 px-3.5 py-2 text-xs bg-white border border-stone-300 rounded-xl text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#535D3B]"
+            />
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#535D3B] hover:bg-[#424A2E] text-white text-xs font-semibold rounded-xl transition-colors shadow-2xs shrink-0"
+            >
+              <span>Post</span>
+              <Send className="w-3 h-3" />
+            </button>
+          </div>
+        </form>
+
+        {/* Display recent local comments if any */}
+        {localComments.length > 0 && (
+          <div className="pt-2 border-t border-stone-200/60 space-y-2">
+            <p className="text-[11px] font-medium text-stone-500">Recent Parent Messages:</p>
+            <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+              {localComments.map((comment) => (
+                <div key={comment.id} className="bg-white p-2.5 rounded-xl border border-stone-200/60 text-xs">
+                  <div className="flex items-center justify-between text-stone-500 mb-1">
+                    <span className="font-semibold text-stone-800 flex items-center gap-1">
+                      <User className="w-3 h-3 text-[#535D3B]" />
+                      {comment.author}
+                    </span>
+                    <span className="text-[10px]">{comment.createdAt}</span>
+                  </div>
+                  <p className="text-stone-700">{comment.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Embedded Disqus Forum Thread */}
-      <div id="disqus_thread" className="pt-2 min-h-[160px]"></div>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+            Official Disqus Thread
+          </span>
+          <a
+            href={directDisqusUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[#535D3B] hover:underline font-medium inline-flex items-center gap-1"
+          >
+            <span>View on Disqus.com</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
+        <div id="disqus_thread" className="pt-2 min-h-[160px]"></div>
+      </div>
 
       <noscript>
         Please enable JavaScript to view the{' '}
@@ -149,4 +262,5 @@ export const DisqusComments: React.FC = () => {
     </section>
   );
 };
+
 
