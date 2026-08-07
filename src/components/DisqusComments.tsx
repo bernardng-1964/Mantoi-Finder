@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageSquare, ExternalLink } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { DiscussionEmbed } from 'disqus-react';
 
 export const DisqusComments: React.FC = () => {
@@ -14,26 +14,31 @@ export const DisqusComments: React.FC = () => {
   };
 
   return (
-    <section className="bg-white border border-amber-200/90 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4 my-8">
-      <div className="flex items-center justify-between border-b border-amber-100 pb-4 flex-wrap gap-2">
-        <div className="flex items-center space-x-2">
-          <MessageSquare className="w-5 h-5 text-amber-700" />
-          <h3 className="text-xl font-extrabold text-stone-900">
-            Parent & Community Discussions
+    <section className="bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4 my-8">
+      {/* Top Header Row */}
+      <div className="flex items-center justify-between border-b border-stone-200/80 pb-4 flex-wrap gap-2">
+        <div className="flex items-center space-x-2.5">
+          <MessageSquare className="w-6 h-6 text-[#535D3B]" />
+          <h3 className="text-xl sm:text-2xl font-serif font-bold text-stone-800 tracking-tight">
+            Community & Reader Discussion
           </h3>
         </div>
-        <a
-          href="https://mantoi-finder.disqus.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-xl text-xs font-semibold transition-colors"
-        >
-          <span>Open Forum</span>
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
+        <div className="bg-[#EFEFE8] text-stone-700 text-xs font-semibold px-3.5 py-1.5 rounded-full border border-stone-300/50 shadow-2xs">
+          Powered by Disqus
+        </div>
       </div>
 
-      <div id="disqus_thread">
+      {/* Sub-text line */}
+      <p className="text-sm text-stone-600 font-normal leading-relaxed">
+        Leave feedback, ask questions, or discuss{' '}
+        <strong className="font-semibold text-stone-800">
+          EzRead Reader & Parent Community
+        </strong>{' '}
+        with fellow readers and parents!
+      </p>
+
+      {/* Embedded Disqus Forum */}
+      <div id="disqus_thread" className="pt-2">
         <DiscussionEmbed shortname={disqusShortname} config={disqusConfig} />
       </div>
 
@@ -44,6 +49,7 @@ export const DisqusComments: React.FC = () => {
     </section>
   );
 };
+
 
 
 
