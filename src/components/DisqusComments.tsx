@@ -1,59 +1,70 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, ExternalLink, Info } from 'lucide-react';
-import { DiscussionEmbed } from 'disqus-react';
+import { MessageSquare, ExternalLink, Info, RefreshCw } from 'lucide-react';
 
 export const DisqusComments: React.FC = () => {
   const disqusShortname = 'mantoi-finder';
   const [isInIframe, setIsInIframe] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    // Detect iframe environment
     try {
       setIsInIframe(window.self !== window.top);
     } catch {
       setIsInIframe(true);
     }
 
-    // Set up disqus_config on window as requested
     const canonicalUrl = typeof window !== 'undefined'
       ? window.location.origin + window.location.pathname
       : 'https://mantoi-finder.disqus.com';
 
+    // Set up disqus_config as specified in Disqus Universal Code
     (window as any).disqus_config = function (this: any) {
       this.page.url = canonicalUrl;
       this.page.identifier = 'mantoi-character-finder-main';
+      this.page.title = 'Mantoi Family Discussion';
     };
 
-    // Load embed script if not present, or trigger DISQUS.reset if already present
+    // Load or reset Disqus
+    if ((window as any).DISQUS) {
+      try {
+        (window as any).DISQUS.reset({
+          reload: true,
+          config: (window as any).disqus_config,
+        });
+        setLoaded(true);
+      } catch (err) {
+        console.warn('Disqus reset error:', err);
+      }
+    } else {
+      const d = document;
+      let s = d.getElementById('disqus-embed-script') as HTMLScriptElement | null;
+      if (!s) {
+        s = d.createElement('script');
+        s.id = 'disqus-embed-script';
+        s.src = `https://${disqusShortname}.disqus.com/embed.js`;
+        s.setAttribute('data-timestamp', (+new Date()).toString());
+        s.onload = () => setLoaded(true);
+        s.onerror = () => setLoaded(false);
+        (d.head || d.body).appendChild(s);
+      } else {
+        setLoaded(true);
+      }
+    }
+  }, []);
+
+  const handleReloadDisqus = () => {
     if ((window as any).DISQUS) {
       (window as any).DISQUS.reset({
         reload: true,
         config: (window as any).disqus_config,
       });
     } else {
-      const d = document;
-      let s = document.getElementById('disqus-embed-script') as HTMLScriptElement | null;
-      if (!s) {
-        s = d.createElement('script');
-        s.id = 'disqus-embed-script';
-        s.src = 'https://mantoi-finder.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', (+new Date()).toString());
-        (d.head || d.body).appendChild(s);
-      }
+      window.location.reload();
     }
-  }, []);
-
-  const canonicalUrl = typeof window !== 'undefined'
-    ? window.location.origin + window.location.pathname
-    : 'https://mantoi-finder.disqus.com';
-
-  const disqusConfig = {
-    url: canonicalUrl,
-    identifier: 'mantoi-character-finder-main',
-    title: 'MANTOI Character Finder Community Discussion',
-    language: 'en',
   };
 
-  const directDisqusUrl = `https://disqus.com/home/discussion/${disqusShortname}/mantoi_character_finder_community_discussion/`;
+  const directDisqusUrl = `https://disqus.com/home/forum/${disqusShortname}/`;
 
   return (
     <section className="bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-sm space-y-4 my-8">
@@ -65,7 +76,7 @@ export const DisqusComments: React.FC = () => {
             Mantoi Family Discussion
           </h3>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <a
             href={typeof window !== 'undefined' ? window.location.href : '#'}
             target="_blank"
@@ -75,6 +86,14 @@ export const DisqusComments: React.FC = () => {
             <span>Open App in New Tab</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
+          <button
+            onClick={handleReloadDisqus}
+            title="Reload comments thread"
+            className="inline-flex items-center gap-1 px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-full text-xs font-medium transition-colors"
+          >
+            <RefreshCw className="w-3 h-3" />
+            <span>Refresh</span>
+          </button>
           <div className="bg-[#EFEFE8] text-stone-700 text-xs font-semibold px-3.5 py-1.5 rounded-full border border-stone-300/50 shadow-2xs">
             Powered by Disqus
           </div>
@@ -86,14 +105,17 @@ export const DisqusComments: React.FC = () => {
         Leave feedback, ask questions, or discuss parenting tips!
       </p>
 
-      {/* Iframe Cookie Notice Banner */}
+      {/* Iframe Cookie / Login Notice Banner */}
       {isInIframe && (
-        <div className="flex items-start gap-3 p-3.5 bg-amber-50/80 border border-amber-200/80 rounded-2xl text-xs text-amber-900">
+        <div className="flex items-start gap-3 p-4 bg-amber-50/90 border border-amber-200 rounded-2xl text-xs text-amber-900 shadow-2xs">
           <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-          <div className="space-y-1">
-            <p className="font-semibold">Having trouble logging in or posting comments inside the preview?</p>
-            <p className="text-amber-800">
-              Browser security blocks third-party Disqus login cookies inside embedded preview frames. Click{' '}
+          <div className="space-y-1.5">
+            <p className="font-semibold text-amber-950">
+              Note on commenting inside the preview panel:
+            </p>
+            <p className="text-amber-800 leading-relaxed">
+              Browser security policies block third-party authentication cookies inside embedded iframe previews.
+              If you have trouble logging in or submitting comments below, please click{' '}
               <a
                 href={typeof window !== 'undefined' ? window.location.href : '#'}
                 target="_blank"
@@ -102,25 +124,23 @@ export const DisqusComments: React.FC = () => {
               >
                 Open App in New Tab
               </a>{' '}
-              or{' '}
+              or visit the{' '}
               <a
                 href={directDisqusUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-bold underline hover:text-amber-950"
               >
-                Post Directly on Disqus
-              </a>{' '}
-              to submit comments seamlessly.
+                Mantoi Forum directly on Disqus
+              </a>
+              .
             </p>
           </div>
         </div>
       )}
 
-      {/* Embedded Disqus Forum */}
-      <div id="disqus_thread" className="pt-2">
-        <DiscussionEmbed shortname={disqusShortname} config={disqusConfig} />
-      </div>
+      {/* Embedded Disqus Forum Thread */}
+      <div id="disqus_thread" className="pt-2 min-h-[160px]"></div>
 
       <noscript>
         Please enable JavaScript to view the{' '}
@@ -129,3 +149,4 @@ export const DisqusComments: React.FC = () => {
     </section>
   );
 };
+
